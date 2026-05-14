@@ -1,6 +1,3 @@
-Segue uma versão breve de `README.md`:
-
-````md
 # Projeto Causalidade — Dados SIM
 
 Este projeto realiza a coleta, limpeza inicial e preparação de dados do Sistema de Informações sobre Mortalidade (SIM), disponibilizados pela Base dos Dados, para estudos sobre mortalidade evitável no Brasil.
@@ -184,31 +181,3 @@ Após a criação das variáveis derivadas, são removidas as linhas com valores
 Essa etapa corresponde a uma análise de casos completos.
 
 Valores como `Ignorado`, `NA`, `None`, `null`, strings vazias e códigos como `9`, `99`, `999` ou `9999` podem ser tratados como ausentes, dependendo da coluna.
-
-## Arquivos de saída
-
-O processamento gera:
-
-```text
-data/processed/sim_selected/dataset.csv
-```
-
-Base final tratada.
-
-```text
-data/processed/sim_selected/audit_limpeza_complete_cases.csv
-```
-
-Auditoria com o número de linhas restantes após cada etapa de limpeza.
-
-```text
-data/processed/sim_selected/audit_remocao_ignorados_por_variavel.csv
-```
-
-Auditoria do impacto de valores ignorados ou ausentes por variável.
-
-```text
-data/processed/sim_selected/audit_mapeamento_escolaridade.csv
-```
-
-Auditoria opcional para verificar como os valores originais de escolaridade foram recodificados.
