@@ -5,7 +5,7 @@ import pandas as pd
 
 BILLING_PROJECT_ID = "inf-causal"
 
-YEARS = [2018, 2023]
+YEARS = [2012, 2019, 2020, 2021, 2022]
 
 UFS = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
@@ -31,6 +31,8 @@ REQUESTED_COLUMNS = [
     "tipo_obito",
     "causa_basica",
     "data_obito",
+    "hora_obito",
+    "naturalidade",
     "data_nascimento",
     "idade",
     "escolaridade",
@@ -42,6 +44,9 @@ REQUESTED_COLUMNS = [
     "ocupacao",
     "local_ocorrencia",
     "assistencia_medica",
+    "necropsia",
+    "codigo_estabelecimento",
+    "atestante",
 ]
 
 EMPTY_LIKE_STRINGS = {

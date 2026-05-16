@@ -23,6 +23,15 @@ COLUMNS_ALLOWED_TO_IGNORE_FOR_COMPLETE_CASE = {
     "morte_evitavel",
     "escolaridade_grupo",
     "escolaridade_nivel",
+    # Variaveis mantidas para EDA/sensibilidade, mas nao usadas para derrubar
+    # registros na limpeza complete-case do nucleo analitico.
+    "sequencial_obito",
+    "hora_obito",
+    "naturalidade",
+    "assistencia_medica",
+    "necropsia",
+    "codigo_estabelecimento",
+    "atestante",
 }
 
 IGNORADO_LIKE = {
@@ -303,9 +312,6 @@ def ignored_impact_by_variable(df: pd.DataFrame) -> pd.DataFrame:
     n = len(df)
 
     for col in df.columns:
-        if col in COLUMNS_ALLOWED_TO_IGNORE_FOR_COMPLETE_CASE:
-            continue
-
         ignored = is_ignored_or_missing(df[col], col)
         n_ignored = int(ignored.sum())
 
