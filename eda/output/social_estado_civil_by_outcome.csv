@@ -1,0 +1,16 @@
+estado_civil,outcome_label,n,share
+Consensual union,Avoidable,91903,0.65154017936266
+Consensual union,Ill-defined,7106,0.050377512317890186
+Consensual union,Non-avoidable,42046,0.2980823083194499
+Married,Avoidable,693979,0.5920246576347473
+Married,Ill-defined,46126,0.03934950388709219
+Married,Non-avoidable,432108,0.36862583847816055
+Separated,Avoidable,173303,0.6192179337844887
+Separated,Ill-defined,14026,0.050115409076941765
+Separated,Non-avoidable,92545,0.3306666571385695
+Single,Avoidable,730354,0.6837285022463169
+Single,Ill-defined,67106,0.06282198067203211
+Single,Non-avoidable,270733,0.253449517081651
+Widowed,Avoidable,191571,0.6273406032026722
+Widowed,Ill-defined,13655,0.044716245865671155
+Widowed,Non-avoidable,100144,0.32794315093165666

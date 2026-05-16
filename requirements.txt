@@ -1,3 +1,5 @@
 pandas
 basedosdados
 pyarrow
+matplotlib
+seaborn

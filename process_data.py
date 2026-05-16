@@ -76,6 +76,54 @@ NUMERIC_OR_ID_COLS_NOT_TO_REMOVE_BY_CODE = {
     "id_municipio_ocorrencia",
 }
 
+CODE_LIKE_COLUMNS_TO_NORMALIZE = {
+    "sequencial_obito",
+    "causa_basica",
+    "naturalidade",
+    "escolaridade",
+    "sexo",
+    "raca_cor",
+    "estado_civil",
+    "id_municipio_residencia",
+    "id_municipio_ocorrencia",
+    "ocupacao",
+    "local_ocorrencia",
+    "assistencia_medica",
+    "necropsia",
+    "codigo_estabelecimento",
+    "atestante",
+}
+
+
+def normalize_code_value(value: object) -> str | pd.NA:
+    if pd.isna(value):
+        return pd.NA
+
+    text = str(value).strip()
+
+    if text == "":
+        return pd.NA
+
+    try:
+        numeric_value = float(text)
+    except ValueError:
+        return text
+
+    if numeric_value.is_integer():
+        return str(int(numeric_value))
+
+    return text
+
+
+def normalize_code_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    for col in CODE_LIKE_COLUMNS_TO_NORMALIZE:
+        if col in df.columns:
+            df[col] = df[col].map(normalize_code_value).astype("string")
+
+    return df
+
 
 def normalize_cid_code(value: object, max_len: int | None = None) -> str:
     """
@@ -399,6 +447,7 @@ def process_data(input_dir: Path, categories_dir: Path, output_dir: Path, output
 
     df = read_parquet_files(files)
     validate_required_columns(df)
+    df = normalize_code_columns(df)
 
     n_original = len(df)
     print(f"\nLinhas originais: {n_original:,}")
