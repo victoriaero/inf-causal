@@ -3,3 +3,6 @@ basedosdados
 pyarrow
 matplotlib
 seaborn
+networkx>=3.0
+pyro-ppl 
+torch
