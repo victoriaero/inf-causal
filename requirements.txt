@@ -4,5 +4,8 @@ pyarrow
 matplotlib
 seaborn
 networkx>=3.0
+scipy
+scikit-learn
+xgboost
 pyro-ppl 
 torch

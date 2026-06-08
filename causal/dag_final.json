@@ -1,0 +1,58 @@
+{
+  "name": "dag_final_mortalidade_evitavel",
+  "description": "DAG final para o estudo de mortalidade evitavel no SIM.",
+  "outcome": "morte_evitavel",
+  "treatments": [
+    "raca_cor",
+    "escolaridade_grupo",
+    "ocupacao",
+    "sigla_uf",
+    "ano"
+  ],
+  "edges": [
+    ["raca_cor", "sigla_uf"],
+    ["raca_cor", "idade_grupo"],
+    ["raca_cor", "ocupacao"],
+    ["raca_cor", "morte_evitavel"],
+    ["sexo", "idade_grupo"],
+    ["sexo", "escolaridade_grupo"],
+    ["sexo", "ocupacao"],
+    ["sexo", "morte_evitavel"],
+    ["raca_cor", "escolaridade_grupo"],
+    ["sigla_uf", "ocupacao"],
+    ["sigla_uf", "escolaridade_grupo"],
+    ["sigla_uf", "idade_grupo"],
+    ["sigla_uf", "local_ocorrencia"],
+    ["sigla_uf", "morte_evitavel"],
+    ["idade_grupo", "escolaridade_grupo"],
+    ["idade_grupo", "ocupacao"],
+    ["idade_grupo", "local_ocorrencia"],
+    ["idade_grupo", "morte_evitavel"],
+    ["ano", "idade_grupo"],
+    ["ano", "escolaridade_grupo"],
+    ["ano", "ocupacao"],
+    ["ano", "morte_evitavel"],
+    ["escolaridade_grupo", "ocupacao"],
+    ["escolaridade_grupo", "morte_evitavel"],
+    ["ocupacao", "local_ocorrencia"],
+    ["ocupacao", "morte_evitavel"],
+    ["local_ocorrencia", "morte_evitavel"]
+  ],
+  "positivity_checks": [
+    {
+      "treatment": "escolaridade_grupo",
+      "adjustment_set": ["ano", "idade_grupo", "sexo"],
+      "label": "efeito_total_escolaridade"
+    },
+    {
+      "treatment": "ocupacao",
+      "adjustment_set": ["ano", "escolaridade_grupo", "idade_grupo", "raca_cor", "sexo", "sigla_uf"],
+      "label": "efeito_total_ocupacao"
+    },
+    {
+      "treatment": "sigla_uf",
+      "adjustment_set": ["raca_cor"],
+      "label": "efeito_total_uf"
+    }
+  ]
+}
