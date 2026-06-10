@@ -41,6 +41,12 @@ CATEGORY_LABELS = {
     },
 }
 
+CATEGORY_AXIS_LABELS = {
+    "sexo": "Sex",
+    "raca_cor": "Race/color",
+    "escolaridade_grupo": "Education",
+}
+
 
 def outcome_label(value: object) -> str:
     if pd.isna(value):
@@ -166,7 +172,7 @@ def outcome_by_category(df: pd.DataFrame, column: str, output_dir: Path) -> pd.D
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.barplot(data=table, x=column, y="share", hue="outcome_label", ax=ax)
     clean_axis(ax)
-    ax.set_xlabel(column.replace("_", " ").title())
+    ax.set_xlabel(CATEGORY_AXIS_LABELS.get(column, column.replace("_", " ").title()))
     ax.set_ylabel("Share of records")
     ax.tick_params(axis="x", rotation=30)
     ax.yaxis.set_major_formatter(lambda x, _: f"{x:.0%}")

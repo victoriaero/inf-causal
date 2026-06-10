@@ -3,9 +3,14 @@ basedosdados
 pyarrow
 matplotlib
 seaborn
+<<<<<<< Updated upstream
 networkx>=3.0
 scipy
 scikit-learn
 xgboost
 pyro-ppl 
 torch
+=======
+scipy
+networkx
+>>>>>>> Stashed changes
