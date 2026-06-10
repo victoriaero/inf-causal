@@ -41,7 +41,7 @@
   "positivity_checks": [
     {
       "treatment": "escolaridade_grupo",
-      "adjustment_set": ["ano", "idade_grupo", "sexo"],
+      "adjustment_set": ["ano", "idade_grupo", "raca_cor", "sexo", "sigla_uf"],
       "label": "efeito_total_escolaridade"
     },
     {

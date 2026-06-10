@@ -32,6 +32,12 @@ Instale as dependências com:
 pip install -r requirements.txt
 ```
 
+No ambiente local deste projeto, o virtualenv usado para as etapas causais é:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python
+```
+
 ## Coleta dos dados brutos
 
 A coleta baixa os dados do SIM por ano e Unidade Federativa, salvando os arquivos em formato Parquet.
@@ -181,3 +187,84 @@ Após a criação das variáveis derivadas, são removidas as linhas com valores
 Essa etapa corresponde a uma análise de casos completos.
 
 Valores como `Ignorado`, `NA`, `None`, `null`, strings vazias e códigos como `9`, `99`, `999` ou `9999` podem ser tratados como ausentes, dependendo da coluna.
+
+## Pipeline causal: escolaridade e morte evitável
+
+O pipeline causal fica em `causal/` e responde ao efeito de `escolaridade_grupo` sobre `morte_evitavel`.
+
+### 1. Grafo causal
+
+O DAG final está em:
+
+```text
+causal/dag_final.json
+```
+
+Para o efeito total de escolaridade, o conjunto de ajuste identificado pelo DAG é:
+
+```text
+ano, idade_grupo, raca_cor, sexo, sigla_uf
+```
+
+### 2. Verificação do DAG, identificabilidade e positividade
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/test_final_dag.py \
+  --output-dir causal/output/final_dag_checks
+```
+
+Esse passo grava validação do DAG, implicações de independência, conjunto de ajuste e diagnóstico de positividade.
+
+### 3. Estimação
+
+Estimador principal por g-computation:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect.py \
+  --output-dir causal/output/education_effect \
+  --bootstrap-iterations 200
+```
+
+Estimador AIPW:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect_aipw.py \
+  --output-dir causal/output/education_effect_aipw \
+  --model-type logistic \
+  --crossfit-folds 5 \
+  --bootstrap-iterations 200
+```
+
+Estimador AIPW multiclasses com XGBoost:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect_aipw_xgb_3class.py \
+  --output-dir causal/output/education_effect_aipw_xgb_3class \
+  --crossfit-folds 5 \
+  --bootstrap-iterations 200
+```
+
+Comparação entre métodos:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/compare_education_methods.py \
+  --output-dir causal/output/education_effect_comparison
+```
+
+### 4. Sensibilidade
+
+O sensitivity check por E-value usa as estimativas de razão de risco geradas pelos estimadores:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/sensitivity_education_effect.py \
+  --output-dir causal/output/education_effect_sensitivity
+```
+
+Se os resultados estiverem em outro diretório ou outra máquina, passe os CSVs explicitamente:
+
+```bash
+/home/victoriaero/Documents/infc-venv/bin/python causal/sensitivity_education_effect.py \
+  --result gcomp=/caminho/effect_estimates_common_support.csv \
+  --result aipw=/caminho/aipw_effect_estimates_common_support.csv \
+  --output-dir causal/output/education_effect_sensitivity
+```
