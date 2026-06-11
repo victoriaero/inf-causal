@@ -1,5 +1,6 @@
 data/*
 sample_analysis/*
-causal/output/*
+causal/output/
+causal/output_old/*
 __pycache__/
 .venv/

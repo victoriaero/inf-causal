@@ -1,28 +1,25 @@
 # Projeto Causalidade — Dados SIM
 
-Este projeto realiza a coleta, limpeza inicial e preparação de dados do Sistema de Informações sobre Mortalidade (SIM), disponibilizados pela Base dos Dados, para estudos sobre mortalidade evitável no Brasil.
+Este repositório organiza uma análise de inferência causal com microdados do Sistema de Informações sobre Mortalidade (SIM), com foco na pergunta:
 
-## Estrutura esperada
+> qual é o efeito causal da escolaridade sobre a ocorrência de mortes evitáveis?
+
+A análise usa um DAG definido previamente para identificar o conjunto de ajuste, exclui causas de morte mal definidas na estimação principal e compara diferentes estimadores para avaliar a robustez dos resultados.
+
+## Estrutura
 
 ```text
-projeto/
-  categories/
-    evitaveis_prefix.txt
-    evitaveis_subcategory.txt
-    evitaveis_exclude.txt
-    mal_definidas_prefix.txt
+categories/          Regras auxiliares para classificar causas evitáveis e mal definidas.
+causal/              DAG final, validação, estimadores, comparação e sensibilidade.
+discovery/      Experimentos de descoberta/filtragem de grafos.
+data/                Dados brutos e processados.
+dictionaries/        Dicionários e arquivos auxiliares do SIM.
+eda/                 Análises exploratórias e figuras.
+notebooks/           Protótipos e verificações manuais.
+scripts/             Scripts de execução do pipeline.
+```
 
-  data/
-    raw/
-      sim_selected/
-        parquet_by_year_uf/
-    processed/
-      sim_selected/
-
-  coleta_sim_bruta_sem_filtros.py
-  processa_sim_tratado.py
-  requirements.txt
-````
+Os notebooks `lucas.ipynb` e `verificacao_refutabilidade.ipynb` ficam em `notebooks/` porque servem como material exploratório e histórico da construção/verificação do DAG. Os códigos canônicos para execução ficam em `causal/`.
 
 ## Requisitos
 
@@ -32,63 +29,36 @@ Instale as dependências com:
 pip install -r requirements.txt
 ```
 
-No ambiente local deste projeto, o virtualenv usado para as etapas causais é:
+Os comandos abaixo assumem execução a partir da raiz do repositório:
 
 ```bash
-/home/victoriaero/Documents/infc-venv/bin/python
+cd /scratch/victoria.estanislau/inf-causal
 ```
 
-## Coleta dos dados brutos
+Se quiser usar um interpretador específico, defina `PYTHON`:
 
-A coleta baixa os dados do SIM por ano e Unidade Federativa, salvando os arquivos em formato Parquet.
+```bash
+PYTHON=/caminho/para/python scripts/run_all_experiments.sh estimators
+```
 
-O script de coleta mantém os dados brutos sem remover registros ausentes ou ignorados. Apenas conversões técnicas, como datas para string, são feitas para permitir o salvamento adequado em Parquet.
+## Dados
 
-Para executar:
+Para baixar os dados brutos do SIM:
 
 ```bash
 python3 download.py
 ```
 
-Os arquivos serão salvos em:
+Os arquivos brutos são salvos em:
 
 ```text
 data/raw/sim_selected/parquet_by_year_uf/
 ```
 
-Também são gerados arquivos de auditoria com contagens, valores ausentes e categorias mais frequentes.
-
-## Seleção inicial de variáveis
-
-A coleta utiliza um subconjunto de colunas do SIM, incluindo informações temporais, geográficas, demográficas, causa básica do óbito e variáveis relacionadas ao registro, como:
-
-* ano
-* sigla_uf
-* sequencial_obito
-* causa_basica
-* data_obito
-* data_nascimento
-* idade
-* escolaridade
-* sexo
-* raca_cor
-* estado_civil
-* id_municipio_residencia
-* id_municipio_ocorrencia
-* ocupacao
-* local_ocorrencia
-* assistencia_medica
-
-A coluna `tipo_obito` é coletada inicialmente, mas removida na etapa de processamento, pois o recorte analítico considera apenas idades entre 5 e 74 anos.
-
-## Processamento dos dados
-
-O script de processamento lê todos os arquivos Parquet brutos, junta os dados e aplica uma limpeza inicial.
-
-Para executar:
+Para processar a base analítica:
 
 ```bash
-python process_data.py
+python3 process_data.py
 ```
 
 A saída principal é:
@@ -97,27 +67,9 @@ A saída principal é:
 data/processed/sim_selected/dataset.csv
 ```
 
-## Critérios de limpeza e seleção
+## Variável de desfecho
 
-A limpeza inicial aplica os seguintes critérios:
-
-### 1. Recorte etário
-
-São mantidos apenas registros com idade entre 5 e 74 anos:
-
-```text
-5 <= idade <= 74
-```
-
-Esse recorte busca evitar dinâmicas específicas de mortalidade infantil e de idades muito avançadas.
-
-### 2. Remoção do ano de 2018
-
-O ano de 2018 é desconsiderado na base tratada. Isso pode ser feito filtrando a coluna `ano` durante o processamento.
-
-### 3. Classificação de morte evitável
-
-É criada a variável `morte_evitavel`, com três valores:
+A variável `morte_evitavel` é criada com três categorias:
 
 ```text
 0 = não evitável
@@ -125,74 +77,21 @@ O ano de 2018 é desconsiderado na base tratada. Isso pode ser feito filtrando a
 2 = mal definida
 ```
 
-A classificação usa arquivos auxiliares na pasta `categories/`:
+A estimação principal usa apenas `0` e `1`, removendo causas mal definidas. A classificação usa os arquivos em `categories/`.
 
-* `evitaveis_prefix.txt`: prefixos CID-10 de três caracteres considerados evitáveis.
-* `evitaveis_subcategory.txt`: subcategorias CID-10 específicas consideradas evitáveis.
-* `evitaveis_exclude.txt`: subcategorias que devem ser excluídas da lista de evitáveis.
-* `mal_definidas_prefix.txt`: prefixos CID-10 considerados causas mal definidas.
+## Tratamento
 
-A ordem de prioridade é:
+A escolaridade é recodificada em três níveis:
 
 ```text
-1. Causa mal definida
-2. Subcategoria explicitamente excluída
-3. Subcategoria explicitamente evitável
-4. Prefixo evitável
-5. Demais causas como não evitáveis
+baixa
+media
+alta
 ```
 
-### 4. Recodificação da escolaridade
+O tratamento principal é `escolaridade_grupo`.
 
-A variável `escolaridade` é recodificada em três níveis:
-
-```text
-baixa:
-- Nenhuma
-- 1 a 3 anos
-
-media:
-- 4 a 7 anos
-- 8 a 11 anos
-- 1 a 8 anos
-- 9 a 11 anos
-
-alta:
-- 12 anos e mais
-```
-
-Nos dados, a escolaridade pode aparecer codificada numericamente. O mapeamento utilizado é:
-
-```text
-0 = baixa
-1 = baixa
-2 = media
-3 = media
-4 = alta
-5 = media
-9 = ignorado
-```
-
-São criadas duas colunas derivadas:
-
-```text
-escolaridade_grupo: baixa, media ou alta
-escolaridade_nivel: 0, 1 ou 2
-```
-
-### 5. Remoção de registros ignorados ou ausentes
-
-Após a criação das variáveis derivadas, são removidas as linhas com valores ausentes, ignorados ou não informados em qualquer atributo original considerado no modelo.
-
-Essa etapa corresponde a uma análise de casos completos.
-
-Valores como `Ignorado`, `NA`, `None`, `null`, strings vazias e códigos como `9`, `99`, `999` ou `9999` podem ser tratados como ausentes, dependendo da coluna.
-
-## Pipeline causal: escolaridade e morte evitável
-
-O pipeline causal fica em `causal/` e responde ao efeito de `escolaridade_grupo` sobre `morte_evitavel`.
-
-### 1. Grafo causal
+## DAG e conjunto de ajuste
 
 O DAG final está em:
 
@@ -200,71 +99,91 @@ O DAG final está em:
 causal/dag_final.json
 ```
 
-Para o efeito total de escolaridade, o conjunto de ajuste identificado pelo DAG é:
+Para o efeito total de `escolaridade_grupo` sobre `morte_evitavel`, o conjunto de ajuste usado é:
 
 ```text
 ano, idade_grupo, raca_cor, sexo, sigla_uf
 ```
 
-### 2. Verificação do DAG, identificabilidade e positividade
+Esse conjunto é usado para estimar o efeito total, portanto mediadores como `ocupacao` e `local_ocorrencia` não entram no ajuste principal.
+
+## Execução principal
+
+O script central é:
 
 ```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/test_final_dag.py \
-  --output-dir causal/output/final_dag_checks
+scripts/run_all_experiments.sh
 ```
 
-Esse passo grava validação do DAG, implicações de independência, conjunto de ajuste e diagnóstico de positividade.
-
-### 3. Estimação
-
-Estimador principal por g-computation:
+Ele organiza os resultados em uma pasta única, controlada por `OUT_ROOT`. Exemplo recomendado para uma execução final:
 
 ```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect.py \
-  --output-dir causal/output/education_effect \
-  --bootstrap-iterations 200
+RUN_DAG=1 OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh all
 ```
 
-Estimador AIPW:
+Isso roda:
+
+```text
+1. Checagem sintática dos scripts.
+2. Validação/refutabilidade do DAG.
+3. G-computation.
+4. AIPW XGBoost par-a-par com bootstrap.
+5. AIPW XGBoost com três classes.
+6. Modelo bayesiano hierárquico com três configurações de prior.
+7. Comparação entre métodos.
+8. Sensibilidade por E-value.
+```
+
+Os principais resultados ficam em:
+
+```text
+causal/output/final_runs/minha_execucao/
+```
+
+## Rodar etapas separadas
+
+Também é possível executar partes do pipeline:
 
 ```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect_aipw.py \
-  --output-dir causal/output/education_effect_aipw \
-  --model-type logistic \
-  --crossfit-folds 5 \
-  --bootstrap-iterations 200
+OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh dag
+OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh estimators
+OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh bayesian
+OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh compare
+OUT_ROOT=causal/output/final_runs/minha_execucao scripts/run_all_experiments.sh sensitivity
 ```
 
-Estimador AIPW multiclasses com XGBoost:
+Use o mesmo `OUT_ROOT` para manter os resultados da execução juntos. O arquivo `run_manifest.txt` registra as chamadas feitas.
+
+## Parâmetros úteis
+
+Os principais parâmetros podem ser alterados por variáveis de ambiente:
 
 ```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/estimate_education_effect_aipw_xgb_3class.py \
-  --output-dir causal/output/education_effect_aipw_xgb_3class \
-  --crossfit-folds 5 \
-  --bootstrap-iterations 200
+BOOTSTRAP_ITERATIONS=300 \
+BOOTSTRAP_SAMPLE_SIZE=100000 \
+BOOTSTRAP_EVALUATION_SIZE=100000 \
+XGB_PAIR_CROSSFIT_FOLDS=3 \
+XGB_3CLASS_CROSSFIT_FOLDS=2 \
+BAYESIAN_SVI_STEPS=3000 \
+BAYESIAN_POSTERIOR_SAMPLES=1000 \
+OUT_ROOT=causal/output/final_runs/minha_execucao \
+scripts/run_all_experiments.sh all
 ```
 
-Comparação entre métodos:
+## Resultados principais
 
-```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/compare_education_methods.py \
-  --output-dir causal/output/education_effect_comparison
+Os arquivos mais usados para tabelas e discussão são:
+
+```text
+method_comparison/education_effect_methods_risk_difference.csv
+method_comparison/education_effect_methods_risk_ratio.csv
+aipw_xgb_pair_crossfit3_bootstrap300/aipw_bootstrap_summary_common_support.csv
+aipw_xgb_3class_bootstrap300/aipw_3class_bootstrap_summary_global_support.csv
+bayesian_sensitivity/bayesian_sensitivity_risk_difference_median.csv
+evalue_sensitivity/education_effect_evalues.csv
+dag_checks/independence_tests.csv
 ```
 
-### 4. Sensibilidade
+## Observação metodológica
 
-O sensitivity check por E-value usa as estimativas de razão de risco geradas pelos estimadores:
-
-```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/sensitivity_education_effect.py \
-  --output-dir causal/output/education_effect_sensitivity
-```
-
-Se os resultados estiverem em outro diretório ou outra máquina, passe os CSVs explicitamente:
-
-```bash
-/home/victoriaero/Documents/infc-venv/bin/python causal/sensitivity_education_effect.py \
-  --result gcomp=/caminho/effect_estimates_common_support.csv \
-  --result aipw=/caminho/aipw_effect_estimates_common_support.csv \
-  --output-dir causal/output/education_effect_sensitivity
-```
+Os resultados devem ser interpretados como evidência compatível com efeito causal sob as hipóteses do DAG, positividade e ausência de confundimento não medido forte. A análise de sensibilidade por E-value ajuda a explicitar o quanto as conclusões poderiam ser afetadas por confundimento não observado.

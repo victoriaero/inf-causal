@@ -11,16 +11,30 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "causal" / "output" / "education_effect_sensitivity"
 DEFAULT_RESULT_PATHS = {
     "gcomp": PROJECT_ROOT / "causal" / "output" / "education_effect" / "effect_estimates_common_support.csv",
-    "aipw_logistic": PROJECT_ROOT / "causal" / "output" / "education_effect_aipw" / "aipw_effect_estimates_common_support.csv",
+    "aipw_xgb_pair_crossfit3_bootstrap300": PROJECT_ROOT
+    / "causal"
+    / "output"
+    / "education_effect_aipw_xgb_crossfit3_bootstrap_300x100k"
+    / "aipw_bootstrap_summary_common_support.csv",
     "aipw_xgb_3class": PROJECT_ROOT
     / "causal"
     / "output"
-    / "education_effect_aipw_xgb_3class"
-    / "aipw_3class_effect_estimates_global_support.csv",
-    "bayesian": PROJECT_ROOT
+    / "education_effect_aipw_xgb_3class_bootstrap_300x100k"
+    / "aipw_3class_bootstrap_summary_global_support.csv",
+    "bayesian_default": PROJECT_ROOT
     / "causal"
     / "output"
-    / "education_effect_bayesian_hierarchical"
+    / "education_effect_bayesian_hierarchical_default_svi3000"
+    / "bayesian_posterior_effects_summary.csv",
+    "bayesian_conservative": PROJECT_ROOT
+    / "causal"
+    / "output"
+    / "education_effect_bayesian_hierarchical_conservative_svi3000"
+    / "bayesian_posterior_effects_summary.csv",
+    "bayesian_weak": PROJECT_ROOT
+    / "causal"
+    / "output"
+    / "education_effect_bayesian_hierarchical_weak_svi3000"
     / "bayesian_posterior_effects_summary.csv",
 }
 
@@ -56,6 +70,10 @@ def normalize_result(method: str, path: Path) -> pd.DataFrame:
         rename["comparison_level"] = "treated_level"
     if "risk_ratio_median" in normalized.columns and "risk_ratio" not in normalized.columns:
         rename["risk_ratio_median"] = "risk_ratio"
+    if "estimate_risk_ratio" in normalized.columns and "risk_ratio" not in normalized.columns:
+        rename["estimate_risk_ratio"] = "risk_ratio"
+    if "estimate_risk_difference" in normalized.columns and "risk_difference" not in normalized.columns:
+        rename["estimate_risk_difference"] = "risk_difference"
     if "risk_ratio_ci95_low" in normalized.columns and "ci95_low_risk_ratio" not in normalized.columns:
         rename["risk_ratio_ci95_low"] = "ci95_low_risk_ratio"
     if "risk_ratio_ci95_high" in normalized.columns and "ci95_high_risk_ratio" not in normalized.columns:

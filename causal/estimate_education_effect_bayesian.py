@@ -138,27 +138,35 @@ def hierarchical_binomial_model(
     n_levels: dict[str, int],
     adjustment_set: list[str],
     intercept_loc: float,
+    intercept_prior_scale: float,
+    treatment_prior_scale: float,
+    covariate_prior_scale: float,
 ) -> None:
-    intercept = pyro.sample("intercept", dist.Normal(intercept_loc, 1.5))
+    intercept = pyro.sample("intercept", dist.Normal(intercept_loc, intercept_prior_scale))
     treatment_effect = pyro.sample(
         "treatment_effect",
-        dist.Normal(0.0, 1.0).expand([len(TREATMENT_LEVELS) - 1]).to_event(1),
+        dist.Normal(0.0, treatment_prior_scale).expand([len(TREATMENT_LEVELS) - 1]).to_event(1),
     )
+    model_device = treatment_effect.device
+    treatment = treatment.to(model_device)
+    total = total.to(model_device)
+    if successes is not None:
+        successes = successes.to(model_device)
     treatment_effect = torch.cat(
-        [torch.zeros(1, device=treatment.device), treatment_effect],
+        [treatment_effect.new_zeros(1), treatment_effect],
         dim=0,
     )
 
     logits = intercept + treatment_effect[treatment]
 
     for column in adjustment_set:
-        sigma = pyro.sample(f"sigma_{column}", dist.HalfNormal(1.0))
+        sigma = pyro.sample(f"sigma_{column}", dist.HalfNormal(covariate_prior_scale))
         raw_effect = pyro.sample(
             f"effect_{column}",
             dist.Normal(0.0, sigma).expand([n_levels[column]]).to_event(1),
         )
         centered_effect = raw_effect - raw_effect.mean()
-        logits = logits + centered_effect[covariates[column]]
+        logits = logits + centered_effect[covariates[column].to(model_device)]
 
     with pyro.plate("cells", len(total)):
         pyro.sample(
@@ -176,6 +184,9 @@ def fit_svi(
     svi_steps: int,
     learning_rate: float,
     random_seed: int,
+    intercept_prior_scale: float,
+    treatment_prior_scale: float,
+    covariate_prior_scale: float,
 ) -> tuple[AutoNormal, pd.DataFrame]:
     pyro.clear_param_store()
     pyro.set_rng_seed(random_seed)
@@ -190,6 +201,9 @@ def fit_svi(
             n_levels=n_levels,
             adjustment_set=adjustment_set,
             intercept_loc=intercept_loc,
+            intercept_prior_scale=intercept_prior_scale,
+            treatment_prior_scale=treatment_prior_scale,
+            covariate_prior_scale=covariate_prior_scale,
         )
 
     guide = AutoNormal(model)
@@ -231,9 +245,12 @@ def posterior_standardized_risks(
 
     for sample_index in range(samples["intercept"].shape[0]):
         intercept = samples["intercept"][sample_index]
+        sample_device = intercept.device
+        weights_for_sample = weights.to(sample_device)
+        weight_sum = weights_for_sample.sum()
         treatment_effect = torch.cat(
             [
-                torch.zeros(1, device=weights.device),
+                samples["treatment_effect"][sample_index].new_zeros(1),
                 samples["treatment_effect"][sample_index],
             ],
             dim=0,
@@ -242,11 +259,11 @@ def posterior_standardized_risks(
         for column in adjustment_set:
             raw = samples[f"effect_{column}"][sample_index]
             centered = raw - raw.mean()
-            base_logits = base_logits + centered[eval_tensors[column]]
+            base_logits = base_logits + centered[eval_tensors[column].to(sample_device)]
 
         for level_index, level in enumerate(TREATMENT_LEVELS):
             probabilities = torch.sigmoid(base_logits + treatment_effect[level_index])
-            risk = torch.sum(probabilities * weights) / weight_sum
+            risk = torch.sum(probabilities * weights_for_sample) / weight_sum
             rows.append(
                 {
                     "posterior_sample": sample_index + 1,
@@ -256,6 +273,101 @@ def posterior_standardized_risks(
             )
 
     return pd.DataFrame(rows)
+
+
+def summarize_parameter_draws(
+    samples: dict[str, torch.Tensor],
+    adjustment_set: list[str],
+) -> pd.DataFrame:
+    rows = []
+
+    def add_summary(parameter: str, label: str, values: torch.Tensor) -> None:
+        values_np = values.detach().cpu().numpy().reshape(-1)
+        rows.append(
+            {
+                "parameter": parameter,
+                "label": label,
+                "mean": float(np.mean(values_np)),
+                "median": float(np.median(values_np)),
+                "ci95_low": float(np.quantile(values_np, 0.025)),
+                "ci95_high": float(np.quantile(values_np, 0.975)),
+            }
+        )
+
+    add_summary("intercept", "intercept", samples["intercept"])
+    for index, level in enumerate(TREATMENT_LEVELS[1:]):
+        add_summary(
+            "treatment_effect",
+            f"{level}_vs_{TREATMENT_LEVELS[0]}",
+            samples["treatment_effect"][:, index],
+        )
+
+    for column in adjustment_set:
+        add_summary(f"sigma_{column}", column, samples[f"sigma_{column}"])
+
+    return pd.DataFrame(rows)
+
+
+def posterior_predictive_by_treatment(
+    samples: dict[str, torch.Tensor],
+    tensors: dict[str, torch.Tensor],
+    adjustment_set: list[str],
+) -> pd.DataFrame:
+    treatment = tensors["treatment"]
+    total = tensors["total"]
+    successes = tensors["successes"]
+    rows = []
+
+    for sample_index in range(samples["intercept"].shape[0]):
+        intercept = samples["intercept"][sample_index]
+        sample_device = intercept.device
+        treatment_for_sample = treatment.to(sample_device)
+        total_for_sample = total.to(sample_device)
+        successes_for_sample = successes.to(sample_device)
+        treatment_effect = torch.cat(
+            [
+                samples["treatment_effect"][sample_index].new_zeros(1),
+                samples["treatment_effect"][sample_index],
+            ],
+            dim=0,
+        )
+        logits = intercept + treatment_effect[treatment_for_sample]
+        for column in adjustment_set:
+            raw = samples[f"effect_{column}"][sample_index]
+            centered = raw - raw.mean()
+            logits = logits + centered[tensors[column].to(sample_device)]
+
+        probabilities = torch.sigmoid(logits)
+        expected_successes = probabilities * total_for_sample
+
+        for level_index, level in enumerate(TREATMENT_LEVELS):
+            mask = treatment_for_sample == level_index
+            predicted_risk = expected_successes[mask].sum() / total_for_sample[mask].sum()
+            observed_risk = successes_for_sample[mask].sum() / total_for_sample[mask].sum()
+            rows.append(
+                {
+                    "posterior_sample": sample_index + 1,
+                    "level": level,
+                    "observed_risk": float(observed_risk.detach().cpu()),
+                    "predicted_risk": float(predicted_risk.detach().cpu()),
+                    "prediction_error": float((predicted_risk - observed_risk).detach().cpu()),
+                }
+            )
+
+    draws = pd.DataFrame(rows)
+    return (
+        draws.groupby("level", dropna=False)
+        .agg(
+            observed_risk=("observed_risk", "first"),
+            predicted_risk_mean=("predicted_risk", "mean"),
+            predicted_risk_median=("predicted_risk", "median"),
+            predicted_risk_ci95_low=("predicted_risk", lambda value: value.quantile(0.025)),
+            predicted_risk_ci95_high=("predicted_risk", lambda value: value.quantile(0.975)),
+            prediction_error_mean=("prediction_error", "mean"),
+            prediction_error_median=("prediction_error", "median"),
+        )
+        .reset_index()
+    )
 
 
 def summarize_posterior(risks: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -309,6 +421,9 @@ def write_run_config(args: argparse.Namespace, adjustment_set: list[str], output
         "svi_steps": args.svi_steps,
         "learning_rate": args.learning_rate,
         "posterior_samples": args.posterior_samples,
+        "intercept_prior_scale": args.intercept_prior_scale,
+        "treatment_prior_scale": args.treatment_prior_scale,
+        "covariate_prior_scale": args.covariate_prior_scale,
         "adjustment_set": adjustment_set,
         "support_definition": "global_three_level_common_support_keys_from_full_analysis_base",
         "evaluation_population": "adjustment_strata_with_global_common_support",
@@ -331,6 +446,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--svi-steps", type=int, default=3000)
     parser.add_argument("--learning-rate", type=float, default=0.02)
     parser.add_argument("--posterior-samples", type=int, default=1000)
+    parser.add_argument("--intercept-prior-scale", type=float, default=1.5)
+    parser.add_argument("--treatment-prior-scale", type=float, default=1.0)
+    parser.add_argument("--covariate-prior-scale", type=float, default=1.0)
     return parser.parse_args()
 
 
@@ -386,6 +504,9 @@ def main() -> None:
         svi_steps=args.svi_steps,
         learning_rate=args.learning_rate,
         random_seed=args.random_seed,
+        intercept_prior_scale=args.intercept_prior_scale,
+        treatment_prior_scale=args.treatment_prior_scale,
+        covariate_prior_scale=args.covariate_prior_scale,
     )
 
     posterior_samples = sample_posterior_parameters(guide, args.posterior_samples)
@@ -396,6 +517,12 @@ def main() -> None:
         adjustment_set=adjustment_set,
     )
     risk_summary, effect_summary = summarize_posterior(posterior_risks)
+    parameter_summary = summarize_parameter_draws(posterior_samples, adjustment_set)
+    posterior_predictive_summary = posterior_predictive_by_treatment(
+        posterior_samples,
+        tensors=tensors,
+        adjustment_set=adjustment_set,
+    )
 
     support_summary.to_csv(args.output_dir / "bayesian_global_support_summary.csv", index=False)
     support_treatment_distribution.to_csv(
@@ -408,6 +535,11 @@ def main() -> None:
     posterior_risks.to_csv(args.output_dir / "bayesian_posterior_risks_draws.csv", index=False)
     risk_summary.to_csv(args.output_dir / "bayesian_posterior_risks_summary.csv", index=False)
     effect_summary.to_csv(args.output_dir / "bayesian_posterior_effects_summary.csv", index=False)
+    parameter_summary.to_csv(args.output_dir / "bayesian_parameter_summary.csv", index=False)
+    posterior_predictive_summary.to_csv(
+        args.output_dir / "bayesian_posterior_predictive_by_treatment.csv",
+        index=False,
+    )
 
     metadata = pd.DataFrame(
         [
