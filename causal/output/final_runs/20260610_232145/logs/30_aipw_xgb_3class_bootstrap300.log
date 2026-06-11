@@ -1,0 +1,38 @@
+[command] python3 -u causal/estimate_education_effect_aipw_xgb_3class.py --crossfit-folds 1 --bootstrap-iterations 300 --bootstrap-sample-size 100000 --bootstrap-evaluation-sample-size 100000 --output-dir causal/output/final_runs/20260610_232145/aipw_xgb_3class_bootstrap300
+
+Bootstrap AIPW XGB 3 classes 1/300 concluido.
+Bootstrap AIPW XGB 3 classes 10/300 concluido.
+Bootstrap AIPW XGB 3 classes 20/300 concluido.
+Bootstrap AIPW XGB 3 classes 30/300 concluido.
+Bootstrap AIPW XGB 3 classes 40/300 concluido.
+Bootstrap AIPW XGB 3 classes 50/300 concluido.
+Bootstrap AIPW XGB 3 classes 60/300 concluido.
+Bootstrap AIPW XGB 3 classes 70/300 concluido.
+Bootstrap AIPW XGB 3 classes 80/300 concluido.
+Bootstrap AIPW XGB 3 classes 90/300 concluido.
+Bootstrap AIPW XGB 3 classes 100/300 concluido.
+Bootstrap AIPW XGB 3 classes 110/300 concluido.
+Bootstrap AIPW XGB 3 classes 120/300 concluido.
+Bootstrap AIPW XGB 3 classes 130/300 concluido.
+Bootstrap AIPW XGB 3 classes 140/300 concluido.
+Bootstrap AIPW XGB 3 classes 150/300 concluido.
+Bootstrap AIPW XGB 3 classes 160/300 concluido.
+Bootstrap AIPW XGB 3 classes 170/300 concluido.
+Bootstrap AIPW XGB 3 classes 180/300 concluido.
+Bootstrap AIPW XGB 3 classes 190/300 concluido.
+Bootstrap AIPW XGB 3 classes 200/300 concluido.
+Bootstrap AIPW XGB 3 classes 210/300 concluido.
+Bootstrap AIPW XGB 3 classes 220/300 concluido.
+Bootstrap AIPW XGB 3 classes 230/300 concluido.
+Bootstrap AIPW XGB 3 classes 240/300 concluido.
+Bootstrap AIPW XGB 3 classes 250/300 concluido.
+Bootstrap AIPW XGB 3 classes 260/300 concluido.
+Bootstrap AIPW XGB 3 classes 270/300 concluido.
+Bootstrap AIPW XGB 3 classes 280/300 concluido.
+Bootstrap AIPW XGB 3 classes 290/300 concluido.
+Bootstrap AIPW XGB 3 classes 300/300 concluido.
+Estimacao AIPW XGB 3 classes concluida.
+Linhas na analise: 2,818,686
+Estratos com suporte global: 1,596
+Ajuste: ano, idade_grupo, raca_cor, sexo, sigla_uf
+Saidas salvas em: causal/output/final_runs/20260610_232145/aipw_xgb_3class_bootstrap300

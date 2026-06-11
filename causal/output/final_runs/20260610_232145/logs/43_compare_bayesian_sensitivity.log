@@ -1,0 +1,5 @@
+[command] python3 causal/compare_bayesian_sensitivity.py --output-dir causal/output/final_runs/20260610_232145/bayesian_sensitivity --run conservative=causal/output/final_runs/20260610_232145/bayesian_conservative --run default=causal/output/final_runs/20260610_232145/bayesian_default --run weak=causal/output/final_runs/20260610_232145/bayesian_weak
+
+Comparacao bayesiana concluida.
+Rodadas: conservative, default, weak
+Saidas salvas em: causal/output/final_runs/20260610_232145/bayesian_sensitivity

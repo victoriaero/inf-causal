@@ -1,0 +1,4 @@
+contrast,treated_level,reference_level,n_used,n_removed_no_common_support,risk_treated,risk_reference,risk_difference,risk_ratio,model_type,support_type,crossfit_folds
+media_vs_baixa,media,baixa,2633000,185686,0.6667877448923623,0.6763931978220658,-0.009605452929703495,0.9857990101606102,xgb_3class,global_three_level_common_support_min_cell_20,1
+alta_vs_baixa,alta,baixa,2633000,185686,0.636483117083501,0.6763931978220658,-0.039910080738564724,0.9409957390655729,xgb_3class,global_three_level_common_support_min_cell_20,1
+alta_vs_media,alta,media,2633000,185686,0.636483117083501,0.6667877448923623,-0.03030462780886123,0.9545513125563619,xgb_3class,global_three_level_common_support_min_cell_20,1

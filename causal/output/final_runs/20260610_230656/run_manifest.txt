@@ -1,0 +1,29 @@
+run_id=20260610_230656
+project_root=/scratch/victoria.estanislau/inf-causal
+out_root=causal/output/final_runs/20260610_230656
+mode=dag
+python=Python 3.10.12
+date=2026-06-10T23:06:56-03:00
+
+bootstrap_iterations=300
+bootstrap_sample_size=100000
+bootstrap_evaluation_size=100000
+xgb_pair_crossfit_folds=3
+xgb_3class_crossfit_folds=2
+bayesian_svi_steps=3000
+bayesian_posterior_samples=1000
+
+
+[2026-06-10 23:06:56] Output root: causal/output/final_runs/20260610_230656
+
+[2026-06-10 23:06:56] START 00_py_compile
+
+[2026-06-10 23:06:56] END 00_py_compile -> causal/output/final_runs/20260610_230656/logs/00_py_compile.log
+
+[2026-06-10 23:06:56] START 01_dag_checks
+
+[2026-06-10 23:09:42] END 01_dag_checks -> causal/output/final_runs/20260610_230656/logs/01_dag_checks.log
+
+[2026-06-10 23:09:42] DONE dag
+
+[2026-06-10 23:09:42] Resultados em: causal/output/final_runs/20260610_230656

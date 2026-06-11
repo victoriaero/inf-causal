@@ -1,0 +1,2 @@
+dataset_path,n_rows_original,n_rows_complete_for_dag,n_columns_in_dag,dag_columns
+/scratch/victoria.estanislau/inf-causal/data/processed/sim_selected/dataset.csv,2966705,2966705,9,raca_cor|sigla_uf|idade_grupo|ocupacao|morte_evitavel|sexo|escolaridade_grupo|local_ocorrencia|ano

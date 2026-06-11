@@ -1,0 +1,2 @@
+is_dag,n_nodes,n_edges,topological_order,cycle_if_any
+True,9,27,raca_cor | sexo | ano | sigla_uf | idade_grupo | escolaridade_grupo | ocupacao | local_ocorrencia | morte_evitavel,

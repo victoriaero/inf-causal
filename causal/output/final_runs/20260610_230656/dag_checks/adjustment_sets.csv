@@ -1,0 +1,6 @@
+treatment,outcome,is_cause_of_outcome,adjustment_set,adjustment_set_size
+raca_cor,morte_evitavel,True,,0
+escolaridade_grupo,morte_evitavel,True,ano|idade_grupo|raca_cor|sexo|sigla_uf,5
+ocupacao,morte_evitavel,True,ano|escolaridade_grupo|idade_grupo|raca_cor|sexo|sigla_uf,6
+sigla_uf,morte_evitavel,True,raca_cor,1
+ano,morte_evitavel,True,,0

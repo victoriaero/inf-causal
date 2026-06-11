@@ -1,0 +1,6 @@
+[command] python3 -u causal/estimate_education_effect.py --output-dir causal/output/final_runs/20260610_232145/gcomp
+
+Estimacao concluida.
+Linhas na analise: 2,818,686
+Ajuste: ano, idade_grupo, raca_cor, sexo, sigla_uf
+Saidas salvas em: causal/output/final_runs/20260610_232145/gcomp

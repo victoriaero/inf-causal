@@ -1,0 +1,2 @@
+n_methods_loaded,methods_loaded,n_missing_default_paths,missing_default_paths,metric,note
+6,aipw_xgb_3class|aipw_xgb_pair_crossfit3_bootstrap300|bayesian_conservative|bayesian_default|bayesian_weak|gcomp,0,,E-value on risk-ratio scale,"E-value resume a forca minima de associacao que um confundidor nao observado precisaria ter com tratamento e desfecho, na escala RR, para explicar o efeito observado."

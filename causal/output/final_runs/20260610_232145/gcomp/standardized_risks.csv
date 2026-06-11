@@ -1,0 +1,4 @@
+treatment,level,standardized_risk,n_rows_standardized_over
+escolaridade_grupo,baixa,0.6906032800341123,2818686
+escolaridade_grupo,media,0.6731236230527998,2818686
+escolaridade_grupo,alta,0.6439329407107321,2818686

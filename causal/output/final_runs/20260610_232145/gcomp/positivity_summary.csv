@@ -1,0 +1,2 @@
+adjustment_set,n_strata,min_cell_count,n_strata_missing_treatment_level,pct_strata_missing_treatment_level,n_strata_with_small_observed_cell,pct_strata_with_small_observed_cell,min_stratum_n,median_stratum_n
+ano|idade_grupo|raca_cor|sexo|sigla_uf,5002,20,1433,0.2864854058376649,3396,0.6789284286285486,1,60.0

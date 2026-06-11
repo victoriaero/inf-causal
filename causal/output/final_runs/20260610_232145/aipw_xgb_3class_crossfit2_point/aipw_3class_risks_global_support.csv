@@ -1,0 +1,4 @@
+level,treatment_code,risk,n_used,n_removed_no_common_support,support_type,model_type,crossfit_folds
+baixa,0,0.6766914234870544,2633000,185686,global_three_level_common_support_min_cell_20,xgb_3class,2
+media,1,0.6667943761377778,2633000,185686,global_three_level_common_support_min_cell_20,xgb_3class,2
+alta,2,0.6364760862290244,2633000,185686,global_three_level_common_support_min_cell_20,xgb_3class,2

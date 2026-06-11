@@ -1,0 +1,40 @@
+[command] python3 -u causal/estimate_education_effect_bayesian.py --svi-steps 3000 --posterior-samples 1000 --learning-rate 0.02 --intercept-prior-scale 1.5 --treatment-prior-scale 1.0 --covariate-prior-scale 1.0 --output-dir causal/output/final_runs/20260610_232145/bayesian_default
+
+Dispositivo PyTorch: cuda
+Linhas na analise: 2,818,686
+Linhas no suporte global: 2,633,000
+SVI 1/3000: loss_per_row=0.064918
+SVI 100/3000: loss_per_row=0.014159
+SVI 200/3000: loss_per_row=0.011928
+SVI 300/3000: loss_per_row=0.012024
+SVI 400/3000: loss_per_row=0.011640
+SVI 500/3000: loss_per_row=0.011384
+SVI 600/3000: loss_per_row=0.011406
+SVI 700/3000: loss_per_row=0.011432
+SVI 800/3000: loss_per_row=0.011336
+SVI 900/3000: loss_per_row=0.011317
+SVI 1000/3000: loss_per_row=0.011418
+SVI 1100/3000: loss_per_row=0.011370
+SVI 1200/3000: loss_per_row=0.011318
+SVI 1300/3000: loss_per_row=0.011316
+SVI 1400/3000: loss_per_row=0.011290
+SVI 1500/3000: loss_per_row=0.011304
+SVI 1600/3000: loss_per_row=0.011287
+SVI 1700/3000: loss_per_row=0.011295
+SVI 1800/3000: loss_per_row=0.011299
+SVI 1900/3000: loss_per_row=0.011301
+SVI 2000/3000: loss_per_row=0.011295
+SVI 2100/3000: loss_per_row=0.011311
+SVI 2200/3000: loss_per_row=0.011323
+SVI 2300/3000: loss_per_row=0.011311
+SVI 2400/3000: loss_per_row=0.011293
+SVI 2500/3000: loss_per_row=0.011499
+SVI 2600/3000: loss_per_row=0.011415
+SVI 2700/3000: loss_per_row=0.011291
+SVI 2800/3000: loss_per_row=0.011292
+SVI 2900/3000: loss_per_row=0.011329
+SVI 3000/3000: loss_per_row=0.011291
+Estimacao bayesiana concluida.
+Celulas agregadas de treino: 4,788
+Estratos de avaliacao: 1,596
+Saidas salvas em: causal/output/final_runs/20260610_232145/bayesian_default

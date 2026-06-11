@@ -1,0 +1,9 @@
+[command] python3 -u causal/estimate_education_effect_aipw_xgb_3class.py --crossfit-folds 2 --bootstrap-iterations 0 --output-dir causal/output/final_runs/20260610_232145/aipw_xgb_3class_crossfit2_point
+
+Cross-fit xgb_3class: fold 1/2.
+Cross-fit xgb_3class: fold 2/2.
+Estimacao AIPW XGB 3 classes concluida.
+Linhas na analise: 2,818,686
+Estratos com suporte global: 1,596
+Ajuste: ano, idade_grupo, raca_cor, sexo, sigla_uf
+Saidas salvas em: causal/output/final_runs/20260610_232145/aipw_xgb_3class_crossfit2_point

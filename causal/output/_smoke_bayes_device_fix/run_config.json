@@ -1,0 +1,26 @@
+{
+  "dataset": "/scratch/victoria.estanislau/inf-causal/data/processed/sim_selected/dataset.csv",
+  "dag": "/scratch/victoria.estanislau/inf-causal/causal/dag_final.json",
+  "output_dir": "causal/output/_smoke_bayes_device_fix",
+  "model_type": "bayesian_hierarchical_binomial_logistic",
+  "inference": "pyro_svi_autonormal",
+  "max_rows": 50000,
+  "random_seed": 42,
+  "min_cell_count": 20,
+  "svi_steps": 20,
+  "learning_rate": 0.02,
+  "posterior_samples": 10,
+  "intercept_prior_scale": 1.5,
+  "treatment_prior_scale": 1.0,
+  "covariate_prior_scale": 1.0,
+  "adjustment_set": [
+    "ano",
+    "idade_grupo",
+    "raca_cor",
+    "sexo",
+    "sigla_uf"
+  ],
+  "support_definition": "global_three_level_common_support_keys_from_full_analysis_base",
+  "evaluation_population": "adjustment_strata_with_global_common_support",
+  "likelihood": "aggregated_binomial_by_treatment_and_adjustment_strata"
+}

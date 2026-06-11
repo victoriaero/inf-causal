@@ -1,0 +1,10 @@
+x,y,conditioning_set,conditioning_set_size
+ano,local_ocorrencia,idade_grupo|ocupacao|sigla_uf,3
+ano,raca_cor,,0
+ano,sexo,,0
+ano,sigla_uf,,0
+escolaridade_grupo,local_ocorrencia,idade_grupo|ocupacao|sigla_uf,3
+local_ocorrencia,raca_cor,idade_grupo|ocupacao|sigla_uf,3
+local_ocorrencia,sexo,idade_grupo|ocupacao|sigla_uf,3
+raca_cor,sexo,,0
+sexo,sigla_uf,,0

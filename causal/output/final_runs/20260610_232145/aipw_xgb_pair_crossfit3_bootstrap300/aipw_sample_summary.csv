@@ -1,0 +1,2 @@
+dataset_path,dag_path,estimator,model_type,outcome_filter,treatment,treatment_levels,adjustment_set,n_rows,outcome_mean,min_cell_count,propensity_clip
+/scratch/victoria.estanislau/inf-causal/data/processed/sim_selected/dataset.csv,/scratch/victoria.estanislau/inf-causal/causal/dag_final.json,AIPW,xgb,"mantem morte_evitavel em {0, 1}; exclui 2 (mal definida)",escolaridade_grupo,baixa|media|alta,ano|idade_grupo|raca_cor|sexo|sigla_uf,2818686,0.6673712502918027,20,0.01

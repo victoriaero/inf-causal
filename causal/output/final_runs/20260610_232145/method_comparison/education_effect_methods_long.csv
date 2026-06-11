@@ -1,0 +1,10 @@
+method,contrast,treated_level,reference_level,n_used,n_removed_no_common_support,risk_treated,risk_reference,risk_difference,risk_ratio
+aipw_xgb_3class_bootstrap300,alta_vs_baixa,alta,baixa,,,,,-0.0378599950286187,0.9440412757375966
+aipw_xgb_pair_crossfit3_bootstrap300,alta_vs_baixa,alta,baixa,,,,,-0.03381116231957,0.9496323887980757
+gcomp,alta_vs_baixa,alta,baixa,1033444.0,83074.0,0.6388528276430716,0.6859956193475951,-0.0471427917045235,0.9312782904512452
+aipw_xgb_3class_bootstrap300,alta_vs_media,alta,media,,,,,-0.026917344890297,0.9595714801205466
+aipw_xgb_pair_crossfit3_bootstrap300,alta_vs_media,alta,media,,,,,-0.0257683231273031,0.9615169742609916
+gcomp,alta_vs_media,alta,media,2428619.0,40283.0,0.6413570013406518,0.6706274008563095,-0.0292703995156576,0.9563537077693472
+aipw_xgb_3class_bootstrap300,media_vs_baixa,media,baixa,,,,,-0.0109424443159247,0.9838290391193822
+aipw_xgb_pair_crossfit3_bootstrap300,media_vs_baixa,media,baixa,,,,,-0.0149426063145977,0.9781277331411676
+gcomp,media_vs_baixa,media,baixa,1946281.0,105671.0,0.6693761074112647,0.6870312467664366,-0.0176551393551718,0.9743022760052517

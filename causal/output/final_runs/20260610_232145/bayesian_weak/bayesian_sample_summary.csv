@@ -1,0 +1,2 @@
+dataset_path,dag_path,n_rows_before_support,n_rows_after_support,n_removed_no_common_support,n_training_cells,n_evaluation_strata,outcome_mean_after_support,adjustment_set
+/scratch/victoria.estanislau/inf-causal/data/processed/sim_selected/dataset.csv,/scratch/victoria.estanislau/inf-causal/causal/dag_final.json,2818686,2633000,185686,4788,1596,0.6621997721230536,ano|idade_grupo|raca_cor|sexo|sigla_uf

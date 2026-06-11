@@ -1,0 +1,6 @@
+[command] python3 causal/test_final_dag.py --n-bootstraps 150 --sample-size 10000 --output-dir causal/output/final_runs/20260610_230656/dag_checks
+
+Checks do DAG final concluidos.
+Saidas salvas em: causal/output/final_runs/20260610_230656/dag_checks
+Implicacoes testaveis: 9
+Implicacoes refutadas: 3

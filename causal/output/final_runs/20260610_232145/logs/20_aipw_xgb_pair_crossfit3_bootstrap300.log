@@ -1,0 +1,47 @@
+[command] python3 -u causal/estimate_education_effect_aipw.py --model-type xgb --crossfit-folds 3 --bootstrap-iterations 300 --bootstrap-sample-size 100000 --bootstrap-evaluation-sample-size 100000 --gcomp-results causal/output/final_runs/20260610_232145/gcomp/effect_estimates_common_support.csv --output-dir causal/output/final_runs/20260610_232145/aipw_xgb_pair_crossfit3_bootstrap300
+
+Cross-fit media_vs_baixa: fold 1/3.
+Cross-fit media_vs_baixa: fold 2/3.
+Cross-fit media_vs_baixa: fold 3/3.
+Cross-fit alta_vs_baixa: fold 1/3.
+Cross-fit alta_vs_baixa: fold 2/3.
+Cross-fit alta_vs_baixa: fold 3/3.
+Cross-fit alta_vs_media: fold 1/3.
+Cross-fit alta_vs_media: fold 2/3.
+Cross-fit alta_vs_media: fold 3/3.
+Bootstrap AIPW 1/300 concluido.
+Bootstrap AIPW 10/300 concluido.
+Bootstrap AIPW 20/300 concluido.
+Bootstrap AIPW 30/300 concluido.
+Bootstrap AIPW 40/300 concluido.
+Bootstrap AIPW 50/300 concluido.
+Bootstrap AIPW 60/300 concluido.
+Bootstrap AIPW 70/300 concluido.
+Bootstrap AIPW 80/300 concluido.
+Bootstrap AIPW 90/300 concluido.
+Bootstrap AIPW 100/300 concluido.
+Bootstrap AIPW 110/300 concluido.
+Bootstrap AIPW 120/300 concluido.
+Bootstrap AIPW 130/300 concluido.
+Bootstrap AIPW 140/300 concluido.
+Bootstrap AIPW 150/300 concluido.
+Bootstrap AIPW 160/300 concluido.
+Bootstrap AIPW 170/300 concluido.
+Bootstrap AIPW 180/300 concluido.
+Bootstrap AIPW 190/300 concluido.
+Bootstrap AIPW 200/300 concluido.
+Bootstrap AIPW 210/300 concluido.
+Bootstrap AIPW 220/300 concluido.
+Bootstrap AIPW 230/300 concluido.
+Bootstrap AIPW 240/300 concluido.
+Bootstrap AIPW 250/300 concluido.
+Bootstrap AIPW 260/300 concluido.
+Bootstrap AIPW 270/300 concluido.
+Bootstrap AIPW 280/300 concluido.
+Bootstrap AIPW 290/300 concluido.
+Bootstrap AIPW 300/300 concluido.
+Estimacao AIPW concluida.
+Linhas na analise: 2,818,686
+Modelo: xgb
+Ajuste: ano, idade_grupo, raca_cor, sexo, sigla_uf
+Saidas salvas em: causal/output/final_runs/20260610_232145/aipw_xgb_pair_crossfit3_bootstrap300

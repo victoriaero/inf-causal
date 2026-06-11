@@ -1,0 +1,22 @@
+{
+  "dag": "/scratch/victoria.estanislau/inf-causal/causal/dag_final.json",
+  "dataset": "/scratch/victoria.estanislau/inf-causal/data/processed/sim_selected/dataset.csv",
+  "output_dir": "causal/output/final_runs/20260610_232145/gcomp",
+  "max_rows": 0,
+  "random_seed": 42,
+  "min_cell_count": 20,
+  "bootstrap_iterations": 0,
+  "bootstrap_sample_size": 100000,
+  "bootstrap_evaluation_sample_size": 100000,
+  "treatment": "escolaridade_grupo",
+  "outcome": "morte_evitavel",
+  "adjustment_set": [
+    "ano",
+    "idade_grupo",
+    "raca_cor",
+    "sexo",
+    "sigla_uf"
+  ],
+  "support_definition": "pairwise_common_support_keys_from_full_analysis_base",
+  "evaluation_population": "observed_pair_levels_with_fixed_common_support"
+}

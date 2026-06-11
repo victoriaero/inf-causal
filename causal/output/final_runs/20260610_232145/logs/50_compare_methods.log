@@ -1,0 +1,5 @@
+[command] python3 causal/compare_education_methods.py --output-dir causal/output/final_runs/20260610_232145/method_comparison --method-result gcomp=causal/output/final_runs/20260610_232145/gcomp/effect_estimates_common_support.csv --method-result aipw_xgb_pair_crossfit3_bootstrap300=causal/output/final_runs/20260610_232145/aipw_xgb_pair_crossfit3_bootstrap300/aipw_bootstrap_summary_common_support.csv --method-result aipw_xgb_3class_bootstrap300=causal/output/final_runs/20260610_232145/aipw_xgb_3class_bootstrap300/aipw_3class_bootstrap_summary_global_support.csv
+
+Comparacao concluida.
+Metodos: gcomp, aipw_xgb_pair_crossfit3_bootstrap300, aipw_xgb_3class_bootstrap300
+Saidas salvas em: causal/output/final_runs/20260610_232145/method_comparison

@@ -1,0 +1,4 @@
+contrast,level_a,level_b,adjustment_set,min_cell_count,n_pair_rows,n_pair_rows_in_common_support,pct_pair_rows_in_common_support,n_strata_pair_observed,n_strata_pair_common_support,pct_strata_pair_common_support,min_pair_stratum_n,median_pair_stratum_n
+media_vs_baixa,baixa,media,ano|idade_grupo|raca_cor|sexo|sigla_uf,20,2051952,1946281,0.9485022066792985,4857,1750,0.36030471484455423,1,46.0
+alta_vs_baixa,baixa,alta,ano|idade_grupo|raca_cor|sexo|sigla_uf,20,1116518,1033444,0.9255954673368454,4636,1596,0.3442622950819672,1,35.5
+alta_vs_media,media,alta,ano|idade_grupo|raca_cor|sexo|sigla_uf,20,2468902,2428619,0.9836838400228117,4904,2328,0.47471451876019577,1,53.0

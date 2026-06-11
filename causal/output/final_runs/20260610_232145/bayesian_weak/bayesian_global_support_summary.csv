@@ -1,0 +1,2 @@
+support_type,adjustment_set,n_rows_before_support,n_rows_after_support,n_removed_no_common_support,pct_rows_after_support,n_supported_strata,min_cell_count
+global_three_level_common_support_min_cell_20,ano|idade_grupo|raca_cor|sexo|sigla_uf,2818686,2633000,185686,0.9341232049259832,1596,20

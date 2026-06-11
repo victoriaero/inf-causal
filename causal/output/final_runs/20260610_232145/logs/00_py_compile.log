@@ -1,0 +1,2 @@
+[command] python3 -m py_compile causal/compare_bayesian_sensitivity.py causal/compare_education_methods.py causal/estimate_education_effect.py causal/estimate_education_effect_aipw.py causal/estimate_education_effect_aipw_xgb_3class.py causal/estimate_education_effect_bayesian.py causal/sensitivity_education_effect.py causal/test_final_dag.py
+

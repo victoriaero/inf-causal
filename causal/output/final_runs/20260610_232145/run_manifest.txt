@@ -1,0 +1,93 @@
+run_id=20260611_102056
+project_root=/scratch/victoria.estanislau/inf-causal
+out_root=causal/output/final_runs/20260610_232145
+mode=sensitivity
+python=Python 3.10.12
+date=2026-06-11T10:20:56-03:00
+
+bootstrap_iterations=300
+bootstrap_sample_size=100000
+bootstrap_evaluation_size=100000
+xgb_pair_crossfit_folds=3
+xgb_3class_crossfit_folds=2
+bayesian_svi_steps=3000
+bayesian_posterior_samples=1000
+
+
+[2026-06-11 10:20:56] Output root: causal/output/final_runs/20260610_232145
+
+[2026-06-11 10:20:56] START 00_py_compile
+
+[2026-06-11 10:20:56] END 00_py_compile -> causal/output/final_runs/20260610_232145/logs/00_py_compile.log
+
+[2026-06-11 10:20:56] START 60_evalue_sensitivity
+
+[2026-06-11 10:20:56] END 60_evalue_sensitivity -> causal/output/final_runs/20260610_232145/logs/60_evalue_sensitivity.log
+
+[2026-06-11 10:20:56] DONE sensitivity
+
+[2026-06-11 10:20:56] Resultados em: causal/output/final_runs/20260610_232145
+
+================================================================
+
+run_invocation_id=20260611_102514
+project_root=/scratch/victoria.estanislau/inf-causal
+out_root=causal/output/final_runs/20260610_232145
+mode=dag
+python=Python 3.10.12
+date=2026-06-11T10:25:14-03:00
+
+bootstrap_iterations=300
+bootstrap_sample_size=100000
+bootstrap_evaluation_size=100000
+xgb_pair_crossfit_folds=3
+xgb_3class_crossfit_folds=2
+bayesian_svi_steps=3000
+bayesian_posterior_samples=1000
+
+
+[2026-06-11 10:25:14] Output root: causal/output/final_runs/20260610_232145
+
+[2026-06-11 10:25:14] START 00_py_compile
+
+[2026-06-11 10:25:14] END 00_py_compile -> causal/output/final_runs/20260610_232145/logs/00_py_compile.log
+
+[2026-06-11 10:25:14] START 01_dag_checks
+
+[2026-06-11 10:28:41] END 01_dag_checks -> causal/output/final_runs/20260610_232145/logs/01_dag_checks.log
+
+[2026-06-11 10:28:41] DONE dag
+
+[2026-06-11 10:28:41] Resultados em: causal/output/final_runs/20260610_232145
+
+================================================================
+
+run_invocation_id=20260611_102934
+project_root=/scratch/victoria.estanislau/inf-causal
+out_root=causal/output/final_runs/20260610_232145
+mode=compare
+python=Python 3.10.12
+date=2026-06-11T10:29:34-03:00
+
+bootstrap_iterations=300
+bootstrap_sample_size=100000
+bootstrap_evaluation_size=100000
+xgb_pair_crossfit_folds=3
+xgb_3class_crossfit_folds=2
+bayesian_svi_steps=3000
+bayesian_posterior_samples=1000
+
+
+[2026-06-11 10:29:34] Output root: causal/output/final_runs/20260610_232145
+
+[2026-06-11 10:29:34] START 00_py_compile
+
+[2026-06-11 10:29:34] END 00_py_compile -> causal/output/final_runs/20260610_232145/logs/00_py_compile.log
+
+[2026-06-11 10:29:34] START 50_compare_methods
+
+[2026-06-11 10:29:34] END 50_compare_methods -> causal/output/final_runs/20260610_232145/logs/50_compare_methods.log
+
+[2026-06-11 10:29:34] DONE compare
+
+[2026-06-11 10:29:34] Resultados em: causal/output/final_runs/20260610_232145

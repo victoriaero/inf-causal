@@ -1,0 +1,5 @@
+[command] python3 causal/sensitivity_education_effect.py --output-dir causal/output/final_runs/20260610_232145/evalue_sensitivity --result gcomp=causal/output/final_runs/20260610_232145/gcomp/effect_estimates_common_support.csv --result aipw_xgb_pair_crossfit3_bootstrap300=causal/output/final_runs/20260610_232145/aipw_xgb_pair_crossfit3_bootstrap300/aipw_bootstrap_summary_common_support.csv --result aipw_xgb_3class=causal/output/final_runs/20260610_232145/aipw_xgb_3class_bootstrap300/aipw_3class_bootstrap_summary_global_support.csv --result bayesian_conservative=causal/output/final_runs/20260610_232145/bayesian_conservative/bayesian_posterior_effects_summary.csv --result bayesian_default=causal/output/final_runs/20260610_232145/bayesian_default/bayesian_posterior_effects_summary.csv --result bayesian_weak=causal/output/final_runs/20260610_232145/bayesian_weak/bayesian_posterior_effects_summary.csv
+
+Sensitivity check concluido.
+Metodos carregados: aipw_xgb_3class, aipw_xgb_pair_crossfit3_bootstrap300, bayesian_conservative, bayesian_default, bayesian_weak, gcomp
+Saidas salvas em: causal/output/final_runs/20260610_232145/evalue_sensitivity
