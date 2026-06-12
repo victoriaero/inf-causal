@@ -103,7 +103,10 @@ def normalize_result(method: str, path: Path) -> pd.DataFrame:
     return out
 
 
-def sensitivity_summary(results: pd.DataFrame) -> pd.DataFrame:
+def sensitivity_summary(
+    results: pd.DataFrame,
+    benchmark_rr: float | None = None,
+) -> pd.DataFrame:
     out = results.copy()
     out["risk_ratio"] = pd.to_numeric(out["risk_ratio"], errors="coerce")
     out["risk_ratio_away_from_null"] = np.where(
@@ -126,17 +129,12 @@ def sensitivity_summary(results: pd.DataFrame) -> pd.DataFrame:
     else:
         out["e_value_ci_limit"] = np.nan
 
-    out["interpretation"] = out["e_value_point_estimate"].map(
-        lambda value: (
-            "sem efeito observado no RR"
-            if pd.isna(value) or value == 1
-            else (
-                "maior sensibilidade a confundimento nao observado"
-                if value < 1.5
-                else "mais robusto a confundimento nao observado"
-            )
-        )
-    )
+    if benchmark_rr is not None and benchmark_rr > 1:
+        out["benchmark_rr"] = benchmark_rr
+        out["e_value_exceeds_benchmark"] = out["e_value_point_estimate"] > benchmark_rr
+        if has_ci:
+            out["e_value_ci_limit_exceeds_benchmark"] = out["e_value_ci_limit"] > benchmark_rr
+
     return out
 
 
@@ -167,6 +165,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Falha se algum resultado padrao nao existir. Por padrao, usa apenas os arquivos existentes.",
     )
+    parser.add_argument(
+        "--benchmark-rr",
+        type=float,
+        default=0.0,
+        help=(
+            "RR do confundidor observado mais forte, usado como referencia para o E-value. "
+            "Se informado (>1), adiciona colunas benchmark_rr e e_value_exceeds_benchmark. "
+            "Exemplo: --benchmark-rr 1.4 se raca_cor tem RR ~1.4 com morte_evitavel."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -191,7 +199,8 @@ def main() -> None:
         raise FileNotFoundError("Nenhum arquivo de resultado encontrado.\n" + missing_text)
 
     results = pd.concat(frames, ignore_index=True)
-    summary = sensitivity_summary(results)
+    benchmark_rr = args.benchmark_rr if args.benchmark_rr > 1 else None
+    summary = sensitivity_summary(results, benchmark_rr=benchmark_rr)
     summary = summary.sort_values(["contrast", "method"]).reset_index(drop=True)
     summary.to_csv(args.output_dir / "education_effect_evalues.csv", index=False)
 
@@ -202,10 +211,12 @@ def main() -> None:
                 "methods_loaded": "|".join(summary["method"].drop_duplicates()),
                 "n_missing_default_paths": len(missing_paths),
                 "missing_default_paths": "|".join(f"{method}:{path}" for method, path in missing_paths),
+                "benchmark_rr": benchmark_rr if benchmark_rr is not None else "",
                 "metric": "E-value on risk-ratio scale",
                 "note": (
                     "E-value resume a forca minima de associacao que um confundidor nao observado "
-                    "precisaria ter com tratamento e desfecho, na escala RR, para explicar o efeito observado."
+                    "precisaria ter com tratamento e desfecho, na escala RR, para explicar o efeito observado. "
+                    "Use --benchmark-rr para comparar com o RR do confundidor observado mais forte."
                 ),
             }
         ]

@@ -221,6 +221,27 @@ def fit_svi(
     return guide, pd.DataFrame(rows)
 
 
+def check_svi_convergence(loss_trace: pd.DataFrame, window_pct: float = 0.1) -> pd.DataFrame:
+    n = len(loss_trace)
+    window = max(1, int(n * window_pct))
+    loss_per_row = loss_trace["loss_per_row"]
+    last_mean = float(loss_per_row.iloc[-window:].mean())
+    prev_mean = float(loss_per_row.iloc[-2 * window : -window].mean())
+    relative_change = abs(last_mean - prev_mean) / (abs(prev_mean) + 1e-10)
+    return pd.DataFrame(
+        [
+            {
+                "n_steps": n,
+                "window_size": window,
+                "loss_per_row_prev_window": prev_mean,
+                "loss_per_row_last_window": last_mean,
+                "relative_change": float(relative_change),
+                "converged": bool(relative_change < 0.005),
+            }
+        ]
+    )
+
+
 def sample_posterior_parameters(
     guide: AutoNormal,
     n_samples: int,
@@ -509,6 +530,15 @@ def main() -> None:
         covariate_prior_scale=args.covariate_prior_scale,
     )
 
+    convergence = check_svi_convergence(loss_trace)
+    if not bool(convergence.loc[0, "converged"]):
+        print(
+            f"AVISO: SVI pode nao ter convergido. "
+            f"Mudanca relativa nos ultimos {int(convergence.loc[0, 'window_size'])} passos: "
+            f"{convergence.loc[0, 'relative_change']:.4f} (threshold=0.005). "
+            f"Considere aumentar --svi-steps ou reduzir --learning-rate."
+        )
+
     posterior_samples = sample_posterior_parameters(guide, args.posterior_samples)
     posterior_risks = posterior_standardized_risks(
         posterior_samples,
@@ -532,6 +562,7 @@ def main() -> None:
     training_cells.to_csv(args.output_dir / "bayesian_training_cells.csv", index=False)
     eval_strata.to_csv(args.output_dir / "bayesian_evaluation_strata.csv", index=False)
     loss_trace.to_csv(args.output_dir / "bayesian_svi_loss_trace.csv", index=False)
+    convergence.to_csv(args.output_dir / "bayesian_svi_convergence.csv", index=False)
     posterior_risks.to_csv(args.output_dir / "bayesian_posterior_risks_draws.csv", index=False)
     risk_summary.to_csv(args.output_dir / "bayesian_posterior_risks_summary.csv", index=False)
     effect_summary.to_csv(args.output_dir / "bayesian_posterior_effects_summary.csv", index=False)

@@ -532,6 +532,27 @@ def positivity_for_estimation(df: pd.DataFrame, adjustment_set: list[str], min_c
     return summary, counts
 
 
+def positivity_sensitivity_sweep(
+    model: Pipeline,
+    df: pd.DataFrame,
+    adjustment_set: list[str],
+    thresholds: list[int],
+) -> pd.DataFrame:
+    rows = []
+    for threshold in thresholds:
+        support_keys = build_support_key_map(df, adjustment_set=adjustment_set, min_cell_count=threshold)
+        effects = pairwise_common_support_effects(
+            model,
+            df,
+            adjustment_set=adjustment_set,
+            min_cell_count=threshold,
+            support_key_map=support_keys,
+        )
+        effects.insert(0, "min_cell_count", threshold)
+        rows.append(effects)
+    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+
+
 def write_run_config(args: argparse.Namespace, adjustment_set: list[str], output_dir: Path) -> None:
     config = {
         "dag": str(args.dag),
@@ -548,6 +569,7 @@ def write_run_config(args: argparse.Namespace, adjustment_set: list[str], output
         "adjustment_set": adjustment_set,
         "support_definition": "pairwise_common_support_keys_from_full_analysis_base",
         "evaluation_population": "observed_pair_levels_with_fixed_common_support",
+        "primary_estimates_file": "effect_estimates_common_support.csv",
     }
     with (output_dir / "run_config.json").open("w", encoding="utf-8") as file:
         json.dump(config, file, indent=2, ensure_ascii=False)
@@ -566,6 +588,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--bootstrap-iterations", type=int, default=0, help="Numero de reamostragens bootstrap; 0 desativa.")
     parser.add_argument("--bootstrap-sample-size", type=int, default=100000, help="Tamanho de cada amostra bootstrap; 0 usa a base de analise inteira.")
     parser.add_argument("--bootstrap-evaluation-sample-size", type=int, default=100000, help="Tamanho da amostra fixa usada para padronizar cada bootstrap; 0 usa a base de analise inteira.")
+    parser.add_argument(
+        "--min-cell-count-sensitivity",
+        type=str,
+        default="",
+        help=(
+            "Lista de thresholds separados por virgula para varredura de sensibilidade a positividade. "
+            "O modelo ajustado e reutilizado; apenas a populacao de padronizacao muda. "
+            "Exemplo: --min-cell-count-sensitivity 5,10,20,50,100"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -658,11 +690,24 @@ def main() -> None:
             index=False,
         )
     coefficients.to_csv(args.output_dir / "model_coefficients.csv", index=False)
+
+    if args.min_cell_count_sensitivity:
+        thresholds = [int(t.strip()) for t in args.min_cell_count_sensitivity.split(",") if t.strip()]
+        if thresholds:
+            positivity_sensitivity = positivity_sensitivity_sweep(
+                model, df, adjustment_set=adjustment_set, thresholds=thresholds
+            )
+            positivity_sensitivity.to_csv(
+                args.output_dir / "effect_estimates_positivity_sensitivity.csv", index=False
+            )
+            print(f"Varredura de positividade concluida para thresholds: {thresholds}")
+
     write_run_config(args, adjustment_set, args.output_dir)
 
     print("Estimacao concluida.")
     print(f"Linhas na analise: {len(df):,}")
     print(f"Ajuste: {', '.join(adjustment_set)}")
+    print(f"Resultado primario: effect_estimates_common_support.csv")
     print(f"Saidas salvas em: {args.output_dir}")
 
 
